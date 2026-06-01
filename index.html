@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gửi chữ tới TouchDesigner</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            background-color: #1a1a1a; 
+            color: #ffffff; 
+        }
+        .container { 
+            background: #2a2a2a; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5); 
+            text-align: center;
+            width: 85%;
+            max-width: 400px;
+        }
+        h2 {
+            margin-top: 0;
+            font-size: 22px;
+            color: #f3f3f3;
+        }
+        input { 
+            padding: 12px; 
+            width: 100%; 
+            font-size: 16px; 
+            border: 2px solid #444; 
+            border-radius: 6px; 
+            background-color: #111;
+            color: white;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        button { 
+            padding: 12px; 
+            width: 100%;
+            font-size: 16px; 
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        button:hover { 
+            background-color: #45a049; 
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        #status { 
+            margin-top: 15px; 
+            font-size: 14px; 
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Nhập chữ muốn gửi</h2>
+    <input type="text" id="userInput" placeholder="Nhập nội dung tại đây..." autocomplete="off">
+    <button onclick="sendToTouchDesigner()">Gửi dữ liệu</button>
+    <div id="status"></div>
+</div>
+
+<script>
+    async function sendToTouchDesigner() {
+        const textValue = document.getElementById('userInput').value;
+        const statusDiv = document.getElementById('status');
+        
+        if (!textValue.trim()) {
+            statusDiv.innerText = "⚠️ Vui lòng nhập chữ trước khi gửi!";
+            statusDiv.style.color = "#ffb3b3";
+            return;
+        }
+
+        statusDiv.innerText = "⏳ Đang gửi...";
+        statusDiv.style.color = "#aaa";
+
+        try {
+            // Đã cập nhật IP MacBook của bạn (192.168.1.32) và Port trống (9000)
+            const response = await fetch('http://192.168.1.32:9000', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: textValue })
+            });
+
+            if (response.ok) {
+                statusDiv.innerText = "✅ Gửi thành công sang TouchDesigner!";
+                statusDiv.style.color = "#4CAF50";
+                document.getElementById('userInput').value = ''; // Xóa chữ trong ô nhập sau khi gửi
+            } else {
+                statusDiv.innerText = "❌ Lỗi: TouchDesigner phản hồi thất bại.";
+                statusDiv.style.color = "#f44336";
+            }
+        } catch (error) {
+            console.error(error);
+            statusDiv.innerText = "🚫 Không thể kết nối! Hãy chắc chắn Mac và điện thoại cùng kết nối một mạng Wi-Fi và Web Server DAT đang Active ở Port 9000.";
+            statusDiv.style.color = "#f44336";
+        }
+    }
+</script>
+
+</body>
+</html>
