@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gửi chữ tới TouchDesigner</title>
+    <title>Gửi chữ tới TouchDesigner (Ngrok Online)</title>
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
@@ -76,7 +76,7 @@
 <div class="container">
     <h2>Nhập chữ muốn gửi</h2>
     <input type="text" id="userInput" placeholder="Nhập nội dung tại đây..." autocomplete="off">
-    <button onclick="sendToTouchDesigner()">Gửi dữ liệu</button>
+    <button onclick="sendToTouchDesigner()">Gửi dữ liệu công khai</button>
     <div id="status"></div>
 </div>
 
@@ -91,12 +91,14 @@
             return;
         }
 
-        statusDiv.innerText = "⏳ Đang gửi...";
+        statusDiv.innerText = "⏳ Đang gửi dữ liệu ra Internet...";
         statusDiv.style.color = "#aaa";
 
         try {
-            // Đã cập nhật IP MacBook của bạn (192.168.1.32) và Port trống (9000)
-            const response = await fetch('http://192.168.1.32:9000', {
+            // Đã cập nhật chính xác đường link Ngrok đang online của bạn
+            const ngrokLink = "https://retrain-uncouth-cartwheel.ngrok-free.dev"; 
+
+            const response = await fetch(ngrokLink, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -105,16 +107,16 @@
             });
 
             if (response.ok) {
-                statusDiv.innerText = "✅ Gửi thành công sang TouchDesigner!";
+                statusDiv.innerText = "✅ Tuyệt vời! Chữ đã bay vào TouchDesigner.";
                 statusDiv.style.color = "#4CAF50";
-                document.getElementById('userInput').value = ''; // Xóa chữ trong ô nhập sau khi gửi
+                document.getElementById('userInput').value = ''; // Xóa chữ trong ô nhập sau khi gửi thành công
             } else {
-                statusDiv.innerText = "❌ Lỗi: TouchDesigner phản hồi thất bại.";
+                statusDiv.innerText = "❌ Lỗi: Server phản hồi thất bại.";
                 statusDiv.style.color = "#f44336";
             }
         } catch (error) {
             console.error(error);
-            statusDiv.innerText = "🚫 Không thể kết nối! Hãy chắc chắn Mac và điện thoại cùng kết nối một mạng Wi-Fi và Web Server DAT đang Active ở Port 9000.";
+            statusDiv.innerText = "🚫 Lỗi kết nối! Hãy chắc chắn cửa sổ Terminal Ngrok trên Mac của bạn vẫn đang mở.";
             statusDiv.style.color = "#f44336";
         }
     }
